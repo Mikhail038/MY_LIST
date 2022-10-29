@@ -4,7 +4,9 @@
 #include "list.h"
 #include "MYassert.h"
 
+#define Error 1
 
+#define ZERO_ELEMENT 0
 #define InvalidNumber -1
 #define BITS_IN_BYTE 8
 
@@ -51,12 +53,14 @@ void dump_errors (void)
 
 int list_validator (SList* List)
 {
-    int address = 0;
+    int address = ZERO_ELEMENT;
     for (int counter = 0; counter < List->size; ++counter)
     {
         MCE (address == List->ArrData[List->ArrData[address].next].prev, IncorrectLinks);
         address = List->ArrData[address].next;
     }
+    MCE (List->capacity > 0, CapasityLessZero);
+    MCE (List->size <= List->capacity, SizeMoreCapacity);
 
     //printf ("!!%d!!\n", Errors);
     if (Errors != 0)
@@ -92,14 +96,15 @@ void dump_list (SList* List)
     printf ("%s %s\n\n" KNRM , __DATE__, __TIME__);
 
     printf (KYLW "size %d\n" KNRM, List->size);
+    printf (KYLW "capacity %d\n" KNRM, List->capacity);
     printf (KYLW "free %d\n" KNRM, List->free);
 
 
     printf (Kbright KWHT "[%02d] %12lg |%2d|%2d|\n" KNRM, 0,
-            List->ArrData[0].data, List->ArrData[0].prev, List->ArrData[0].next);
+            List->ArrData[ZERO_ELEMENT].data, List->ArrData[ZERO_ELEMENT].prev, List->ArrData[ZERO_ELEMENT].next);
 
     printf (KRED Kunderscore "In memory:\n" KNRM KRED);
-    for (int counter = 1; counter < List->capacity; ++counter)
+    for (int counter = 1; counter <= List->capacity; ++counter)
     {
         printf ("[%02d] %12lg |%2d|%2d|\n", counter,
         List->ArrData[counter].data, List->ArrData[counter].prev, List->ArrData[counter].next);
@@ -140,26 +145,32 @@ int list_constructor (SList* List, int Size)
     List->capacity = Size;
     List->size = 0;
 
-    List->ArrData = (SElem*) calloc (Size, sizeof (*List->ArrData));
+    List->ArrData = (SElem*) calloc (Size + 1, sizeof (*List->ArrData));
 
-    for (int counter = 0; counter < Size; ++counter)
+    TElem poison = 0;
+    if (sizeof (TElem) == sizeof (double))
     {
-        do_dead_ded (&(List->ArrData[counter].data));
+        do_dead_ded (&poison);
     }
 
-    List->ArrData[0].next = 0;
-    List->ArrData[0].prev = 0;
+    for (int counter = 0; counter <= Size; ++counter)
+    {
+        List->ArrData[counter].data = poison;
+    }
+
+    List->ArrData[ZERO_ELEMENT].next = 0;
+    List->ArrData[ZERO_ELEMENT].prev = 0;
 
     List->free = 1;
 
-    for (int counter = List->free; counter < Size - 1; ++counter)
+    for (int counter = List->free; counter < Size; ++counter)
     {
         List->ArrData[counter].prev = InvalidNumber;
         List->ArrData[counter].next = counter + 1;
     }
 
-    List->ArrData[Size - 1].prev = InvalidNumber;
-    List->ArrData[Size - 1].next =  0;
+    List->ArrData[Size].prev = InvalidNumber;
+    List->ArrData[Size].next = ZERO_ELEMENT;
 
     // for (int counter = 0; counter < sizeof (Telem); ++counter)
     // {
@@ -181,7 +192,7 @@ int find_address (SList* List, int number, int* address)
     MCA (list_validator (List) == 0, Error);
     //MCA (List->size > 0, Error);
 
-    *address = 0;
+    *address = ZERO_ELEMENT;
 
     if (number <= List->size / 2)
     {
@@ -206,7 +217,7 @@ int pop_from_list (SList* List, int address)
     MCA (list_validator (List) == 0, Error);
     MCA (anchor_validator (List, address) == 0, Error);
 
-    MCA (address != 0, Error);
+    MCA (address != ZERO_ELEMENT, Error);
 
     List->ArrData[List->ArrData[address].prev].next = List->ArrData[address].next;
     List->ArrData[List->ArrData[address].next].prev = List->ArrData[address].prev;
@@ -214,9 +225,9 @@ int pop_from_list (SList* List, int address)
     List->ArrData[address].prev = InvalidNumber;
     List->ArrData[address].next = List->free;
 
-    Telem poison = 0;
+    TElem poison = 0;
 
-    if (sizeof (Telem) == sizeof (double))
+    if (sizeof (TElem) == sizeof (double))
     {
         do_dead_ded (&poison);
     }
@@ -231,16 +242,19 @@ int pop_from_list (SList* List, int address)
     return 0;
 }
 
-int insert_before (SList* List, Telem data, int anchor, int* address)
+int insert_before (SList* List, TElem data, int anchor, int* address)
 {
     MCA (list_validator (List) == 0, Error);
     MCA (anchor_validator (List, *address) == 0, Error);
 
-
+    //printf ("%d %d %d\n", List->size, List->capacity, List->free); dump_list (List);
+    if (List->free == ZERO_ELEMENT)
+    {
+        make_list_bigger (List);
+    }
     //printf ("%lg  anch %d\n", data, anchor);
 
     *address = List->free;
-
     List->free = List->ArrData[*address].next;
 
     List->ArrData[*address].next = anchor;
@@ -259,10 +273,15 @@ int insert_before (SList* List, Telem data, int anchor, int* address)
     return 0;
 }
 
-int insert_after  (SList* List, Telem data, int anchor, int* address)
+int insert_after  (SList* List, TElem data, int anchor, int* address)
 {
     MCA (list_validator (List) == 0, Error);
     MCA (anchor_validator (List, *address) == 0, Error);
+
+    if (List->free == ZERO_ELEMENT)
+    {
+        make_list_bigger (List);
+    }
 
     *address = List->free;
     List->free = List->ArrData[*address].next;
@@ -282,5 +301,37 @@ int insert_after  (SList* List, Telem data, int anchor, int* address)
     return 0;
 }
 
+int make_list_bigger (SList* List)
+{
+    //printf ("before |\n");
+    //dump_list (List);
 
+    MCA (list_validator (List) == 0, Error);
 
+    int address = List->size + 1;
+
+    List->ArrData = (SElem*) realloc (List->ArrData, (List->capacity * coef + 1) * sizeof (SElem));
+    List->capacity *= coef;
+
+    List->free = List->size + 1;
+
+    TElem poison = 0;
+    if (sizeof (TElem) == sizeof (double))
+    {
+        do_dead_ded (&poison);
+    }
+
+    for (int counter = 1; counter <= List->capacity - List->size; ++counter)
+    {
+        List->ArrData[address].next = address + 1;
+        List->ArrData[address].prev = InvalidNumber;
+        List->ArrData[address].data = poison;
+
+        ++address;
+    }
+    List->ArrData[List->capacity].next = ZERO_ELEMENT;
+
+    //printf ("after|\n");
+    //dump_list (List);
+    return 0;
+}

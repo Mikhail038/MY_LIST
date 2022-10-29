@@ -10,8 +10,8 @@
         do                                                                                                 \
         {                                                                                                  \
             fprintf (stderr, "Failed check " KRED Kbright DOTXT (Message) " "                              \
-            KNRM "in " KYLW "%s" KNRM " in " KWHT Kunderscore "%s:%d\n" KNRM,                                                              \
-             __PRETTY_FUNCTION__, __FILE__, __LINE__ );                                                     \
+            KNRM "in " KYLW "%s" KNRM " in " KWHT Kunderscore "%s:%d\n" KNRM,                              \
+             __PRETTY_FUNCTION__, __FILE__, __LINE__ );                                                    \
         } while (0)
 
 

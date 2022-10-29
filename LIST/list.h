@@ -1,13 +1,13 @@
 
 #include "MYassert.h"
 
-#define Error 1
+const int coef = 2;
 
-typedef double Telem;
+typedef double TElem;
 
 typedef struct
 {
-    Telem  data;
+    TElem  data;
     int    next;
     int    prev;
 } SElem;
@@ -38,8 +38,9 @@ int list_deconstructor (SList* List);
 
 int pop_from_list (SList* List, int address);
 
-int insert_before (SList* List, Telem data, int number, int* address);
+int insert_before (SList* List, TElem data, int number, int* address);
 
-int insert_after (SList* List, Telem data, int number, int* address);
+int insert_after (SList* List, TElem data, int number, int* address);
 
+int make_list_bigger (SList* List);
 
