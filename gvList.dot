@@ -1,0 +1,33 @@
+digraph {
+	graph [dpi = 1000];
+	rankdir = RL;
+	ranksep = 1;
+node[color="black", fontsize=14];
+edge[color="blue", fontcolor="blue", fontsize=12];
+ELEM_0[shape="Mrecord", style="rounded", style="filled", fillcolor="#FF0EDD", label = "{{<ad> 0  | 4.8267e-246 | {<pr> 2  | <nx> 1} } }"];
+ELEM_0:<pr> ->ELEM_2:<ad> [weight = 1, color = "lightcyan3", arrowhead = empty, style = dashed];
+ELEM_1[shape="Mrecord", style="rounded", style="filled", fillcolor="lightgrey", label = "{{<ad> 1  | 1 | {<pr> 0  | <nx> 3} } }"];
+ELEM_0:<nx> ->ELEM_1:<ad> [weight = 5];
+ELEM_1:<pr> ->ELEM_0:<ad> [weight = 1, color = "lightcyan3", arrowhead = empty, style = dashed];
+ELEM_3[shape="Mrecord", style="rounded", style="filled", fillcolor="lightgrey", label = "{{<ad> 3  | 2 | {<pr> 1  | <nx> 4} } }"];
+ELEM_1:<nx> ->ELEM_3:<ad> [weight = 5];
+ELEM_3:<pr> ->ELEM_1:<ad> [weight = 1, color = "lightcyan3", arrowhead = empty, style = dashed];
+ELEM_4[shape="Mrecord", style="rounded", style="filled", fillcolor="lightgrey", label = "{{<ad> 4  | 3 | {<pr> 3  | <nx> 6} } }"];
+ELEM_3:<nx> ->ELEM_4:<ad> [weight = 5];
+ELEM_4:<pr> ->ELEM_3:<ad> [weight = 1, color = "lightcyan3", arrowhead = empty, style = dashed];
+ELEM_6[shape="Mrecord", style="rounded", style="filled", fillcolor="lightgrey", label = "{{<ad> 6  | 5 | {<pr> 4  | <nx> 2} } }"];
+ELEM_4:<nx> ->ELEM_6:<ad> [weight = 5];
+ELEM_6:<pr> ->ELEM_4:<ad> [weight = 1, color = "lightcyan3", arrowhead = empty, style = dashed];
+ELEM_2[shape="Mrecord", style="rounded", style="filled", fillcolor="lightgrey", label = "{{<ad> 2  | 6 | {<pr> 6  | <nx> 0} } }"];
+ELEM_6:<nx> ->ELEM_2:<ad> [weight = 5];
+ELEM_2:<pr> ->ELEM_6:<ad> [weight = 1, color = "lightcyan3", arrowhead = empty, style = dashed];
+ELEM_2:<nx> ->ELEM_0:<ad> [weight = 1000];
+ELEM_7[shape="Mrecord", style="rounded", style="filled", fillcolor="sienna", label = "{{<ad> 7  | 4.8267e-246 | {<pr> -1  | <nx> 5} } }"];
+ELEM_7:<nx> ->ELEM_5:<ad> [weight = 1];
+ELEM_5[shape="Mrecord", style="rounded", style="filled", fillcolor="sienna", label = "{{<ad> 5  | 4.8267e-246 | {<pr> -1  | <nx> 8} } }"];
+ELEM_5:<nx> ->ELEM_8:<ad> [weight = 1];
+ELEM_8[shape="Mrecord", style="rounded", style="filled", fillcolor="sienna", label = "{{<ad> 8  | 4.8267e-246 | {<pr> -1  | <nx> 0} } }"];
+ELEM_8:<nx> ->ELEM_0:<ad> [weight = 1];
+FREE[shape="Mrecord", style="rounded", style="filled", fillcolor="#FF0EDD", label = "{ FREE | <nx> 7}"];
+FREE:<nx>->ELEM_7:<ad> [weight = 1];
+}

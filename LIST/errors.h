@@ -11,3 +11,6 @@ DEF_ERR (AnchorMoreCapacity, 5)
 
 DEF_ERR (NotInvalidFreedData, 6)
 
+DEF_ERR (GVCannotOpenDotFile, 7)
+
+

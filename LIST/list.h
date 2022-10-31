@@ -44,3 +44,9 @@ int insert_after (SList* List, TElem data, int number, int* address);
 
 int make_list_bigger (SList* List);
 
+void make_gv_list (SList* List);
+
+char* gv_make_data (SList* List, int address);
+
+void draw_gv_list (void);
+

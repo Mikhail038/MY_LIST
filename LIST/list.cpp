@@ -123,6 +123,11 @@ void dump_list (SList* List)
 
 
     printf (KNRM);
+
+    make_gv_list (List);
+
+    draw_gv_list ();
+
     return;
 }
 
@@ -334,4 +339,95 @@ int make_list_bigger (SList* List)
     //printf ("after|\n");
     //dump_list (List);
     return 0;
+}
+
+void make_gv_list (SList* List)
+{
+    FILE* gvInputFile = fopen ("gvList.dot", "w");
+    MCE (gvInputFile != NULL, GVCannotOpenDotFile);
+
+    int address = ZERO_ELEMENT;
+    char* BufStr = NULL;
+
+    fprintf (gvInputFile,   "digraph {\n"
+                            //"subgraph {\n"
+                            "\t""graph [dpi = 1000];\n"
+                            "\t""rankdir = RL;\n"
+                            "\t""ranksep = 1;\n"
+                            //"\t""splines = ortho\n"
+                            "node[color=\"black\", fontsize=14];\n"
+                            "edge[color=\"blue\", fontcolor=\"blue\", fontsize=12];\n");
+
+    BufStr = gv_make_data (List, ZERO_ELEMENT);
+    fprintf (gvInputFile,
+                            "ELEM_0[shape=\"Mrecord\", style=\"rounded\", style=\"filled\", fillcolor=\"#FF0EDD\", label = \"""%s""\"];\n"
+                            "ELEM_0:<pr> ->ELEM_%d:<ad> [weight = 1, color = \"lightcyan3\", arrowhead = empty, style = dashed];\n"
+                            //"ELEM_0:<nx> ->ELEM_0:<ad>;\n"
+                            , BufStr
+                            , List->ArrData[ZERO_ELEMENT].prev);
+    free (BufStr);
+
+    for (int counter = 1; counter <= List->size; counter++)
+    {
+        address = List->ArrData[address].next;
+        BufStr = gv_make_data (List, address);
+
+        fprintf (gvInputFile,
+                            "ELEM_%d[shape=\"Mrecord\", style=\"rounded\", style=\"filled\", fillcolor=\"lightgrey\", label = \"""%s""\"];\n"
+                            "ELEM_%d:<nx> ->ELEM_%d:<ad> [weight = 5];\n"
+                            "ELEM_%d:<pr> ->ELEM_%d:<ad> [weight = 1, color = \"lightcyan3\", arrowhead = empty, style = dashed];\n",
+                            address, BufStr,
+                            List->ArrData[address].prev, address,
+                            address, List->ArrData[address].prev);
+
+        free (BufStr);
+    }
+
+    address = List->ArrData[address].next;
+    fprintf (gvInputFile,
+                        "ELEM_%d:<nx> ->ELEM_%d:<ad> [weight = 1000];\n",
+                        List->ArrData[address].prev, address);
+//Waaghhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
+    address = List->free;
+
+    for (; address != ZERO_ELEMENT;)
+    {
+        BufStr = gv_make_data (List, address);
+
+        fprintf (gvInputFile,
+                            "ELEM_%d[shape=\"Mrecord\", style=\"rounded\", style=\"filled\", fillcolor=\"sienna\", label = \"""%s""\"];\n"
+                            "ELEM_%d:<nx> ->ELEM_%d:<ad> [weight = 1];\n"
+                            //"ELEM_%d:<pr> ->ELEM_%d:<ad> [weight = 1, color = \"lightcyan3\", arrowhead = empty, style = dashed];\n",
+                            ,address, BufStr,
+                            address, List->ArrData[address].next);
+
+        free (BufStr);
+        address = List->ArrData[address].next;
+    }
+//Waaghhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
+    fprintf (gvInputFile,
+                        "FREE[shape=\"Mrecord\", style=\"rounded\", style=\"filled\", fillcolor=\"#FF0EDD\", label = \"{ FREE | <nx> %d}\"];\n"
+                        "FREE:<nx>->ELEM_%d:<ad> [weight = 1];\n"
+                        //"ELEM_%d:<pr> ->ELEM_%d:<ad> [weight = 1, color = \"lightcyan3\", arrowhead = empty, style = dashed];\n",
+                        , List->free
+                        , List->free);
+
+
+    fprintf (gvInputFile,  "}");
+
+    fclose (gvInputFile);
+
+    return;
+}
+
+char* gv_make_data (SList* List, int address)
+{
+    char* ReturnValue = (char*) calloc (40 + 4 + 4 + 8, sizeof (*ReturnValue)); //!
+    sprintf (ReturnValue, "{{<ad> %d  | %lg | {<pr> %d  | <nx> %d} } }", address, List->ArrData[address].data, List->ArrData[address].prev, List->ArrData[address].next);
+    return ReturnValue;
+}
+
+void draw_gv_list (void)
+{
+    system ("dot -Tpng gvList.dot -o gvList.png");
 }
