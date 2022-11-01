@@ -6,6 +6,7 @@
 
 #define Error 1
 
+#define StdDataSize 100
 #define ZERO_ELEMENT 0
 #define InvalidNumber -1
 #define BITS_IN_BYTE 8
@@ -349,19 +350,26 @@ void make_gv_list (SList* List)
     int address = ZERO_ELEMENT;
     char* BufStr = NULL;
 
+
     fprintf (gvInputFile,   "digraph {\n"
                             //"subgraph {\n"
                             "\t""graph [dpi = 1000];\n"
-                            "\t""rankdir = RL;\n"
+                            "\t""rankdir = LR;\n"
                             "\t""ranksep = 1;\n"
+                            //"\t""splines=\"spline\"\n"
                             //"\t""splines = ortho\n"
                             "node[color=\"black\", fontsize=14];\n"
-                            "edge[color=\"blue\", fontcolor=\"blue\", fontsize=12];\n");
+                            "edge[color=\"blue\", fontcolor=\"blue\", fontsize=12];\n"
+                            "LIST [shape=\"Mrecord\", style=\"rounded\", style=\"filled\", fillcolor=\"#FF0EDD\","
+                            "label = \"{size: %d| capacity: %d |<fr> free: %d | <ar> Array pointer %p}\"];\n"
+                            , List->size, List->capacity, List->free, List->ArrData
+                            );
 
     BufStr = gv_make_data (List, ZERO_ELEMENT);
     fprintf (gvInputFile,
                             "ELEM_0[shape=\"Mrecord\", style=\"rounded\", style=\"filled\", fillcolor=\"#FF0EDD\", label = \"""%s""\"];\n"
                             "ELEM_0:<pr> ->ELEM_%d:<ad> [weight = 1, color = \"lightcyan3\", arrowhead = empty, style = dashed];\n"
+                            "LIST:<ar> ->ELEM_0:<ad> [weight = 1, color = \"pink\", arrowhead = open, style = dashed];\n"
                             //"ELEM_0:<nx> ->ELEM_0:<ad>;\n"
                             , BufStr
                             , List->ArrData[ZERO_ELEMENT].prev);
@@ -406,10 +414,10 @@ void make_gv_list (SList* List)
     }
 //Waaghhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
     fprintf (gvInputFile,
-                        "FREE[shape=\"Mrecord\", style=\"rounded\", style=\"filled\", fillcolor=\"#FF0EDD\", label = \"{ FREE | <nx> %d}\"];\n"
-                        "FREE:<nx>->ELEM_%d:<ad> [weight = 1];\n"
+                        //"FREE[shape=\"Mrecord\", style=\"rounded\", style=\"filled\", fillcolor=\"#FF0EDD\", label = \"{ FREE | <nx> %d}\"];\n"
+                        "LIST:<fr>->ELEM_%d:<ad> [weight = 1];\n"
                         //"ELEM_%d:<pr> ->ELEM_%d:<ad> [weight = 1, color = \"lightcyan3\", arrowhead = empty, style = dashed];\n",
-                        , List->free
+                        //, List->free
                         , List->free);
 
 
@@ -422,8 +430,8 @@ void make_gv_list (SList* List)
 
 char* gv_make_data (SList* List, int address)
 {
-    char* ReturnValue = (char*) calloc (40 + 4 + 4 + 8, sizeof (*ReturnValue)); //!
-    sprintf (ReturnValue, "{{<ad> %d  | %lg | {<pr> %d  | <nx> %d} } }", address, List->ArrData[address].data, List->ArrData[address].prev, List->ArrData[address].next);
+    char* ReturnValue = (char*) calloc (StdDataSize + sizeof (TElem) + 3 * sizeof(int), sizeof (*ReturnValue)); //!
+    sprintf (ReturnValue, "{{<ad> %d |" Elem_print "| {<pr> prev: %d  | <nx> next: %d} } }", address, List->ArrData[address].data, List->ArrData[address].prev, List->ArrData[address].next);
     return ReturnValue;
 }
 

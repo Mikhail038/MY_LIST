@@ -1,6 +1,7 @@
 
 #include "MYassert.h"
 
+#define Elem_print "%lg"
 const int coef = 2;
 
 typedef double TElem;
