@@ -34,8 +34,100 @@ static const StructError ArrStructErr[] =
     #include "errors.h"
 };
 #undef DEF_ERR
-//////////////////////////////////////////////////////////////////////////////////////////////
 
+#define FREE_COLOR "5e6fa6"
+#define DATA_COLOR
+#define ZERO_COLOR
+/*
+    fprintf (file,  "digraph { subgraph { rank=same \n");
+
+    for (int i = 1; i < list->size; i++)
+    {
+        fprintf (file,
+            R"(
+                node_%02d
+                [
+                    style="filled",
+                    fillcolor="#%X"
+                    shape=plaintext,
+                    label=
+                    <
+                        <table border="0" cellborder="1" cellspacing="0">
+                            <tr>
+                                <td colspan="2">Node #%d</td>
+                            </tr>
+                            <tr>
+            )", i, (unsigned) list->list[i].status, i);
+
+        DataPrinter (file, &(list->list[i].data));
+
+        fprintf(file,
+            R"(
+                            </tr>
+                            <tr>
+                                <td port="prev_out" > prev: </td>
+                                <td port="prev_in" > %d    </td>
+                            </tr>
+                            <tr>
+                                <td port="next_in" > next: </td>
+                                <td port="next_out"> %d    </td>
+                            </tr>
+                        </table>
+                    >
+                ];
+            )", list->list[i].prev, list->list[i].next);
+    }
+
+    for (int i = 1; i < list->size; i++)
+    {
+        if (list->list[i].next > 0)
+        {
+            fprintf (file,  "\nnode_%02d:<next_out> -> node_%02d:<next_in>;\n",
+                    i, list->list[i].next);
+        }
+
+        if (list->list[i].prev > 0)
+        {
+            fprintf (file,  "\n node_%02d:<prev_out> -> node_%02d:<prev_in>;\n",
+                    i, list->list[i].prev);
+        }
+    }
+    fprintf (file, "}\n");
+
+    if (list->list[0].next == 0 || list->list[0].prev == 0)
+    {
+        fprintf (file, "node_00 [shape=rectangle, label=\"Terminating node\n(Node #0)\", style=\"filled\", fillcolor=grey];\n");
+    }
+
+    if (list->empty_start <= 0)
+    {
+        fprintf (file, "node_empty_start [shape=rectangle, label=\"Terminating free elements node\n(Node #-1)\", style=\"filled\", fillcolor=grey];\n"
+        "empty_start [shape=rectangle]; empty_start  -> node_empty_start;\n");
+    }
+
+    else
+    {
+        fprintf (file, "empty_start [shape=rectangle]; empty_start -> node_%02d;\n", list->empty_start);
+    }
+
+    fprintf (file,  "head [shape=rectangle]; head -> node_%02d;\n"
+                    "tail [shape=rectangle]; tail -> node_%02d;\n}",
+           list->list[0].next, list->list[0].prev);
+
+    fclose (file);
+
+    void DataPrinter (FILE* file, ll_type* data_to_print)
+{
+    fprintf (file,
+            R"(
+                <td>mat:    %d</td>
+                <td>kanava: %d</td>
+            )",
+            data_to_print->mat, data_to_print->kanava);
+    return;
+}
+
+*/
 void dump_errors (void)
 {
     printf ("==ERROR DUMP==\n");
@@ -351,91 +443,202 @@ void make_gv_list (SList* List)
     char* BufStr = NULL;
 
 
-    fprintf (gvInputFile,   "digraph {\n"
+    fprintf (gvInputFile,   "digraph { subgraph { rank=same \n"
                             //"subgraph {\n"
-                            "\t""graph [dpi = 1000];\n"
-                            "\t""rankdir = LR;\n"
-                            "\t""ranksep = 1;\n"
+                            //"\t""graph [dpi = 1000];\n"
+                            // "\t""rankdir = LR;\n"
+                            // "\t""ranksep = 1;\n"
                             //"\t""splines=\"spline\"\n"
                             //"\t""splines = ortho\n"
-                            "node[color=\"black\", fontsize=14];\n"
-                            "edge[color=\"blue\", fontcolor=\"blue\", fontsize=12];\n"
-                            "LIST [shape=\"Mrecord\", style=\"rounded\", style=\"filled\", fillcolor=\"#FF0EDD\","
-                            "label = \"{size: %d| capacity: %d |<fr> free: %d | <ar> Array pointer %p}\"];\n"
-                            , List->size, List->capacity, List->free, List->ArrData
+
+                            // "node[color=\"black\", fontsize=14];\n"
+                            // "edge[color=\"blue\", fontcolor=\"blue\", fontsize=12];\n"
+                            // "LIST [shape=\"Mrecord\", style=\"rounded\", style=\"filled\", fillcolor=\"#FF0EDD\","
+                            // "label = \"{size: %d| capacity: %d |<fr> free: %d | <ar> Array pointer %p}\"];\n"
+                            // , List->size, List->capacity, List->free, List->ArrData
+
                             );
+//
+//     BufStr = gv_make_data (List, ZERO_ELEMENT);
+//     fprintf (gvInputFile,
+//                             "ELEM_0[shape=\"Mrecord\", style=\"rounded\", style=\"filled\", fillcolor=\"#FF0EDD\", label = \"""%s""\"];\n"
+//                             "ELEM_0:<pr> ->ELEM_%d:<ad> [weight = 1, color = \"lightcyan3\", arrowhead = empty, style = dashed];\n"
+//                             "LIST:<ar> ->ELEM_0:<ad> [weight = 1, color = \"pink\", arrowhead = open, style = dashed];\n"
+//                             //"ELEM_0:<nx> ->ELEM_0:<ad>;\n"
+//                             , BufStr
+//                             , List->ArrData[ZERO_ELEMENT].prev);
+//     free (BufStr);
 
-    BufStr = gv_make_data (List, ZERO_ELEMENT);
-    fprintf (gvInputFile,
-                            "ELEM_0[shape=\"Mrecord\", style=\"rounded\", style=\"filled\", fillcolor=\"#FF0EDD\", label = \"""%s""\"];\n"
-                            "ELEM_0:<pr> ->ELEM_%d:<ad> [weight = 1, color = \"lightcyan3\", arrowhead = empty, style = dashed];\n"
-                            "LIST:<ar> ->ELEM_0:<ad> [weight = 1, color = \"pink\", arrowhead = open, style = dashed];\n"
-                            //"ELEM_0:<nx> ->ELEM_0:<ad>;\n"
-                            , BufStr
-                            , List->ArrData[ZERO_ELEMENT].prev);
-    free (BufStr);
-
-    for (int counter = 1; counter <= List->size; counter++)
+    for (int counter = 0; counter <= List->capacity; counter++)
     {
-        address = List->ArrData[address].next;
-        BufStr = gv_make_data (List, address);
+        if (List->ArrData[counter]. prev != -1)
+        {
+            fprintf (gvInputFile,
+                R"(
+                    node_%d
+                    [
+                        style="filled",
+                        fillcolor="#42f58a"
+                        shape=plaintext,
+                        label=
+                        <
+                            <table border="0" cellborder="1" cellspacing="0">
+                                <tr>
+                                    <td colspan="2">Node #%d</td>
+                                </tr>
+                                <tr>
+                )", counter, counter);
+        }
+        else
+        {
+            fprintf (gvInputFile,
+                R"(
+                    node_%d
+                    [
+                        style="filled",
+                        fillcolor="#)" FREE_COLOR
+                        R"("
+                        shape=plaintext,
+                        label=
+                        <
+                            <table border="0" cellborder="1" cellspacing="0">
+                                <tr>
+                                    <td colspan="2">Node #%d</td>
+                                </tr>
+                                <tr>
+                )", counter, counter);
+        }
 
-        fprintf (gvInputFile,
-                            "ELEM_%d[shape=\"Mrecord\", style=\"rounded\", style=\"filled\", fillcolor=\"lightgrey\", label = \"""%s""\"];\n"
-                            "ELEM_%d:<nx> ->ELEM_%d:<ad> [weight = 5];\n"
-                            "ELEM_%d:<pr> ->ELEM_%d:<ad> [weight = 1, color = \"lightcyan3\", arrowhead = empty, style = dashed];\n",
-                            address, BufStr,
-                            List->ArrData[address].prev, address,
-                            address, List->ArrData[address].prev);
+        print_node (List->ArrData[counter].data, gvInputFile);
 
-        free (BufStr);
+        fprintf(gvInputFile,
+            R"(
+                            </tr>
+                            <tr>
+                                <td port="prev_out" > prev: </td>
+                                <td port="prev_in" > %d    </td>
+                            </tr>
+                            <tr>
+                                <td port="next_in" > next: </td>
+                                <td port="next_out"> %d    </td>
+                            </tr>
+                        </table>
+                    >
+                ];
+            )", List->ArrData[counter].prev, List->ArrData[counter].next);
     }
 
-    address = List->ArrData[address].next;
-    fprintf (gvInputFile,
-                        "ELEM_%d:<nx> ->ELEM_%d:<ad> [weight = 1000];\n",
-                        List->ArrData[address].prev, address);
+    for (int counter = 1; counter <= List->capacity; counter++)
+    {
+        if (List->ArrData[counter].next > 0)
+        {
+            fprintf (gvInputFile,  "\n node_%d:<next_out> -> node_%d:<next_in>;\n",
+                    counter, List->ArrData[counter].next);
+        }
+
+        if (List->ArrData[counter].prev > 0)
+        {
+            fprintf (gvInputFile,  "\n node_%d:<prev_out> -> node_%d:<prev_in>;\n",
+                    counter, List->ArrData[counter].prev);
+        }
+    }
+
+    fprintf (gvInputFile, "}\n");
+
+    fprintf (gvInputFile, "}\n");
+
+
+
+//     for (int counter = 1; counter <= List->size; counter++)
+//     {
+//         address = List->ArrData[address].next;
+//         BufStr = gv_make_data (List, address);
+//
+//         fprintf (gvInputFile,
+//                             "ELEM_%d[shape=\"Mrecord\", style=\"rounded\", style=\"filled\", fillcolor=\"lightgrey\", label = \"""%s""\"];\n"
+//                             "ELEM_%d:<nx> ->ELEM_%d:<ad> [weight = 5];\n"
+//                             "ELEM_%d:<pr> ->ELEM_%d:<ad> [weight = 1, color = \"lightcyan3\", arrowhead = empty, style = dashed];\n",
+//                             address, BufStr,
+//                             List->ArrData[address].prev, address,
+//                             address, List->ArrData[address].prev);
+//
+//         free (BufStr);
+//     }
+
+    // address = List->ArrData[address].next;
+    // fprintf (gvInputFile,
+    //                     "ELEM_%d:<nx> ->ELEM_%d:<ad> [weight = 1000];\n",
+    //                     List->ArrData[address].prev, address);
+
 //Waaghhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
-    address = List->free;
+//
+//     address = List->free;
+//
+//     for (; address != ZERO_ELEMENT;)
+//     {
+//         BufStr = gv_make_data (List, address);
+//
+//         fprintf (gvInputFile,
+//                             "ELEM_%d[shape=\"Mrecord\", style=\"rounded\", style=\"filled\", fillcolor=\"sienna\", label = \"""%s""\"];\n"
+//                             "ELEM_%d:<nx> ->ELEM_%d:<ad> [weight = 1];\n"
+//                             //"ELEM_%d:<pr> ->ELEM_%d:<ad> [weight = 1, color = \"lightcyan3\", arrowhead = empty, style = dashed];\n",
+//                             ,address, BufStr,
+//                             address, List->ArrData[address].next);
+//
+//         free (BufStr);
+//         address = List->ArrData[address].next;
+//     }
 
-    for (; address != ZERO_ELEMENT;)
-    {
-        BufStr = gv_make_data (List, address);
-
-        fprintf (gvInputFile,
-                            "ELEM_%d[shape=\"Mrecord\", style=\"rounded\", style=\"filled\", fillcolor=\"sienna\", label = \"""%s""\"];\n"
-                            "ELEM_%d:<nx> ->ELEM_%d:<ad> [weight = 1];\n"
-                            //"ELEM_%d:<pr> ->ELEM_%d:<ad> [weight = 1, color = \"lightcyan3\", arrowhead = empty, style = dashed];\n",
-                            ,address, BufStr,
-                            address, List->ArrData[address].next);
-
-        free (BufStr);
-        address = List->ArrData[address].next;
-    }
 //Waaghhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
-    fprintf (gvInputFile,
-                        //"FREE[shape=\"Mrecord\", style=\"rounded\", style=\"filled\", fillcolor=\"#FF0EDD\", label = \"{ FREE | <nx> %d}\"];\n"
-                        "LIST:<fr>->ELEM_%d:<ad> [weight = 1];\n"
-                        //"ELEM_%d:<pr> ->ELEM_%d:<ad> [weight = 1, color = \"lightcyan3\", arrowhead = empty, style = dashed];\n",
-                        //, List->free
-                        , List->free);
+
+    // fprintf (gvInputFile,
+    //                     //"FREE[shape=\"Mrecord\", style=\"rounded\", style=\"filled\", fillcolor=\"#FF0EDD\", label = \"{ FREE | <nx> %d}\"];\n"
+    //                     "LIST:<fr>->ELEM_%d:<ad> [weight = 1];\n"
+    //                     //"ELEM_%d:<pr> ->ELEM_%d:<ad> [weight = 1, color = \"lightcyan3\", arrowhead = empty, style = dashed];\n",
+    //                     //, List->free
+    //                     , List->free);
 
 
-    fprintf (gvInputFile,  "}");
+    //fprintf (gvInputFile,  "}");
+
+    // fprintf (gvInputFile,  "head [shape=rectangle]; head -> node_%d;\n"
+    //             "tail [shape=rectangle]; tail -> node_%d;\n}",
+    //     List->ArrData[1], list->list[0].prev);
+
 
     fclose (gvInputFile);
 
     return;
 }
 
+void print_node (TElem data, FILE* gvInputFile)
+{
+        fprintf (gvInputFile,R"(
+                <td colspan="2">data:    %lg</td>
+            )", data);
+}
+
 char* gv_make_data (SList* List, int address)
 {
     char* ReturnValue = (char*) calloc (StdDataSize + sizeof (TElem) + 3 * sizeof(int), sizeof (*ReturnValue)); //!
-    sprintf (ReturnValue, "{{<ad> %d |" Elem_print "| {<pr> prev: %d  | <nx> next: %d} } }", address, List->ArrData[address].data, List->ArrData[address].prev, List->ArrData[address].next);
+    sprintf (ReturnValue, "{{<ad> Node#%d |" Elem_print "| {<pr> prev: %d  | <nx> next: %d} } }", address, List->ArrData[address].data, List->ArrData[address].prev, List->ArrData[address].next);
     return ReturnValue;
 }
 
 void draw_gv_list (void)
 {
     system ("dot -Tpng gvList.dot -o gvList.png");
+
+    system ("xdg-open gvList.png");
 }
+
+//TODO ?? maybe tmp folder mktmp
+
+//TODO variable filename
+
+
+// <table>
+//   <tr>
+//     <td>...</td>
+//   </tr>
+// </table>

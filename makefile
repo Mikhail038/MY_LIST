@@ -13,7 +13,7 @@ CXX_FLAGS += $(DIR_FLAGS)
 
 DO: DO_LIST
 
-DO_LIST: OBJECTS/list.o OBJECTS/main_list.o
+DO_LIST: OBJECTS OBJECTS/list.o OBJECTS/main_list.o
 	g++ OBJECTS/list.o OBJECTS/main_list.o -o list $(CXX_FLAGS)
 
 OBJECTS/list.o: LIST/list.cpp
@@ -21,3 +21,6 @@ OBJECTS/list.o: LIST/list.cpp
 
 OBJECTS/main_list.o: LIST/main_list.cpp
 	g++ -c -o OBJECTS/main_list.o LIST/main_list.cpp $(CXX_FLAGS)
+
+OBJECTS:
+	mkdir -p OBJECTS

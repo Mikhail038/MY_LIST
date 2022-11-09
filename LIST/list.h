@@ -51,3 +51,4 @@ char* gv_make_data (SList* List, int address);
 
 void draw_gv_list (void);
 
+void print_node (TElem data, FILE* gvInputFile);
