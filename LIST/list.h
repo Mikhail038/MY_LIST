@@ -17,6 +17,7 @@ typedef struct
 {
     int    free;
     int    size;
+    char   sort_marker;
     int    capacity;
     SElem* ArrData;
 } SList;
@@ -44,6 +45,8 @@ int insert_before (SList* List, TElem data, int number, int* address);
 int insert_after (SList* List, TElem data, int number, int* address);
 
 int make_list_bigger (SList* List);
+
+int sort_list (SList* List);
 
 void make_gv_list (SList* List);
 

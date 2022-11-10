@@ -11,6 +11,10 @@
 #define InvalidNumber -1
 #define BITS_IN_BYTE 8
 
+#define NOT_SORTED 0
+#define SORTED 1
+
+
 static int Errors = 0;
 
 #define DEF_ERR(e_num, num) e_num = 1 << num,
@@ -35,9 +39,9 @@ static const StructError ArrStructErr[] =
 };
 #undef DEF_ERR
 
-#define FREE_COLOR "5e6fa6"
-#define DATA_COLOR
-#define ZERO_COLOR
+#define FREE_COLOR "dcd1e0"
+#define DATA_COLOR "8ff7d6"
+#define ZERO_COLOR "baf763"
 /*
     fprintf (file,  "digraph { subgraph { rank=same \n");
 
@@ -242,6 +246,7 @@ int list_constructor (SList* List, int Size)
 {
     List->capacity = Size;
     List->size = 0;
+    List->sort_marker = NOT_SORTED;
 
     List->ArrData = (SElem*) calloc (Size + 1, sizeof (*List->ArrData));
 
@@ -336,6 +341,7 @@ int pop_from_list (SList* List, int address)
 
     List->size--;
 
+    List->sort_marker = NOT_SORTED;
 
     return 0;
 }
@@ -367,6 +373,8 @@ int insert_before (SList* List, TElem data, int anchor, int* address)
 
 
     List->size++;
+
+    List->sort_marker = NOT_SORTED;
 
     return 0;
 }
@@ -434,6 +442,68 @@ int make_list_bigger (SList* List)
     return 0;
 }
 
+int sort_list (SList* List)
+{
+    SElem* NewArray = (SElem*) calloc (List->capacity + 1, sizeof (*NewArray));
+
+    int address = ZERO_ELEMENT;
+    int counter = 0;
+
+    for (; counter <= List->size; counter++)
+    {
+        NewArray[counter].data = List->ArrData[address].data;
+
+        if (counter == 1)
+        {
+            NewArray[counter].prev = ZERO_ELEMENT;
+        }
+        else
+        {
+            NewArray[counter].prev = counter - 1;
+        }
+
+        if (counter == List->size)
+        {
+            NewArray[counter].next = ZERO_ELEMENT;
+        }
+        else
+        {
+            NewArray[counter].next = counter + 1;
+        }
+
+        address = List->ArrData[address].next;
+    }
+
+    NewArray[ZERO_ELEMENT].prev = counter - 1;
+    NewArray[ZERO_ELEMENT].next = 1;
+
+
+    address = List->free;
+    List->free = counter;
+
+    for (; counter <= List->capacity; counter++)
+    {
+        NewArray[counter] = List->ArrData[address];
+
+        if (counter == List->capacity)
+        {
+            NewArray[counter].next = ZERO_ELEMENT;
+        }
+        else
+        {
+            NewArray[counter].next = counter + 1;
+        }
+
+        address = List->ArrData[address].next;
+    }
+
+    free (List->ArrData);
+
+    List->ArrData = NewArray;
+
+    return 0;
+}
+
 void make_gv_list (SList* List)
 {
     FILE* gvInputFile = fopen ("gvList.dot", "w");
@@ -456,8 +526,8 @@ void make_gv_list (SList* List)
                             // "LIST [shape=\"Mrecord\", style=\"rounded\", style=\"filled\", fillcolor=\"#FF0EDD\","
                             // "label = \"{size: %d| capacity: %d |<fr> free: %d | <ar> Array pointer %p}\"];\n"
                             // , List->size, List->capacity, List->free, List->ArrData
-
                             );
+
 //
 //     BufStr = gv_make_data (List, ZERO_ELEMENT);
 //     fprintf (gvInputFile,
@@ -471,64 +541,95 @@ void make_gv_list (SList* List)
 
     for (int counter = 0; counter <= List->capacity; counter++)
     {
-        if (List->ArrData[counter]. prev != -1)
-        {
-            fprintf (gvInputFile,
+        fprintf (gvInputFile,
                 R"(
                     node_%d
                     [
                         style="filled",
-                        fillcolor="#42f58a"
-                        shape=plaintext,
-                        label=
-                        <
-                            <table border="0" cellborder="1" cellspacing="0">
-                                <tr>
-                                    <td colspan="2">Node #%d</td>
-                                </tr>
-                                <tr>
-                )", counter, counter);
+                        fillcolor="#)", counter);
+
+        if (counter == 0)
+        {
+            fprintf (gvInputFile, ZERO_COLOR);
+        }
+        else if (List->ArrData[counter].prev != InvalidNumber)
+        {
+            fprintf (gvInputFile, DATA_COLOR);
+        }
+        else
+        {
+            fprintf (gvInputFile, FREE_COLOR);
+        }
+
+        if ((List->ArrData[counter].prev != InvalidNumber) && (counter != ZERO_ELEMENT))
+        {
+            fprintf (gvInputFile,
+                    R"("
+                            shape=plaintext,
+                            label=
+                            <
+                                <table border="0" cellborder="1" cellspacing="0">
+                                    <tr>
+                                        <td bgcolor = "#ffffff" colspan="2">Node #%d</td>
+                                    </tr>
+                                    <tr>)", counter);
         }
         else
         {
             fprintf (gvInputFile,
-                R"(
-                    node_%d
-                    [
-                        style="filled",
-                        fillcolor="#)" FREE_COLOR
-                        R"("
-                        shape=plaintext,
-                        label=
-                        <
-                            <table border="0" cellborder="1" cellspacing="0">
-                                <tr>
-                                    <td colspan="2">Node #%d</td>
-                                </tr>
-                                <tr>
-                )", counter, counter);
+                    R"("
+                            shape=plaintext,
+                            label=
+                            <
+                                <table border="0" cellborder="1" cellspacing="0">
+                                    <tr>
+                                        <td colspan="2">Node #%d</td>
+                                    </tr>
+                                    <tr>)", counter);
         }
 
         print_node (List->ArrData[counter].data, gvInputFile);
 
-        fprintf(gvInputFile,
+        if (List->ArrData[counter].prev != InvalidNumber)
+        {
+            fprintf(gvInputFile,
+                R"(
+                                </tr>
+                                <tr>
+                                    <td bgcolor = "#5fbcfa" port="prev_out" > prev: </td>
+                                    <td bgcolor = "#5fbcfa" port="prev_in" > %d    </td>
+                                </tr>
+                                <tr>
+                                    <td bgcolor = "#f27798" port="next_in" > next: </td>
+                                    <td bgcolor = "#f27798" port="next_out"> %d    </td>
+                                </tr>
+                            </table>
+                        >
+                    ];
+                )", List->ArrData[counter].prev, List->ArrData[counter].next);
+        }
+        else
+        {
+            fprintf(gvInputFile,
             R"(
                             </tr>
                             <tr>
-                                <td port="prev_out" > prev: </td>
-                                <td port="prev_in" > %d    </td>
+                                <td  port="prev_out" > prev: </td>
+                                <td  port="prev_in" > %d    </td>
                             </tr>
                             <tr>
-                                <td port="next_in" > next: </td>
-                                <td port="next_out"> %d    </td>
+                                <td bgcolor = "#f27798" port="next_in" > next: </td>
+                                <td bgcolor = "#f27798" port="next_out"> %d    </td>
                             </tr>
                         </table>
                     >
                 ];
             )", List->ArrData[counter].prev, List->ArrData[counter].next);
+        }
+
     }
 
-    for (int counter = 1; counter <= List->capacity; counter++)
+    for (int counter = 0; counter <= List->capacity; counter++)
     {
         if (List->ArrData[counter].next > 0)
         {
@@ -536,14 +637,33 @@ void make_gv_list (SList* List)
                     counter, List->ArrData[counter].next);
         }
 
-        if (List->ArrData[counter].prev > 0)
+        if ((List->ArrData[counter].prev >= 0) && (counter != ZERO_ELEMENT))
         {
             fprintf (gvInputFile,  "\n node_%d:<prev_out> -> node_%d:<prev_in>;\n",
                     counter, List->ArrData[counter].prev);
         }
+
+        if ((List->ArrData[counter].prev == InvalidNumber) && (List->ArrData[counter].next == ZERO_ELEMENT))
+        {
+            fprintf (gvInputFile,  "\n node_%d:<next_out> -> node_%d:<next_in>;\n",
+                    counter, List->ArrData[counter].next);
+        }
+
     }
 
+
     fprintf (gvInputFile, "}\n");
+
+    fprintf (gvInputFile, "FREE [shape=rectangle]; FREE -> node_%d;\n", List->free);
+
+    fprintf (gvInputFile, "ZERO_ELEMENT [shape=rectangle, fillcolor = \"#" DATA_COLOR "\"]; ZERO_ELEMENT -> node_%d;\n", ZERO_ELEMENT);
+
+    fprintf (gvInputFile, "HEAD [shape=rectangle, fillcolor = \"#" DATA_COLOR "\"]; HEAD -> node_%d;\n", List->ArrData[ZERO_ELEMENT].next);
+
+    fprintf (gvInputFile, "TAIL [shape=rectangle, fillcolor = \"#" DATA_COLOR "\"]; TAIL -> node_%d;\n", List->ArrData[ZERO_ELEMENT].prev);
+
+
+
 
     fprintf (gvInputFile, "}\n");
 
@@ -614,7 +734,8 @@ void make_gv_list (SList* List)
 void print_node (TElem data, FILE* gvInputFile)
 {
         fprintf (gvInputFile,R"(
-                <td colspan="2">data:    %lg</td>
+                <td>   data:  </td>
+                <td>   %lg    </td>
             )", data);
 }
 

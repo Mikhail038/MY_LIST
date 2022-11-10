@@ -39,6 +39,10 @@ int main ()
 
     dump_list (&List);
 
+    sort_list (&List);
+
+    dump_list (&List);
+
     list_deconstructor (&List);
 
     return 0;
