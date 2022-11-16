@@ -13,12 +13,12 @@ digraph { subgraph { rank=same
                                     </tr>
                                     <tr>
                 <td>   data:  </td>
-                <td>   4.8267e-246    </td>
+                <td>   0    </td>
             
                                 </tr>
                                 <tr>
                                     <td bgcolor = "#5fbcfa" port="prev_out" > prev: </td>
-                                    <td bgcolor = "#5fbcfa" port="prev_in" > 5    </td>
+                                    <td bgcolor = "#5fbcfa" port="prev_in" > 2    </td>
                                 </tr>
                                 <tr>
                                     <td bgcolor = "#f27798" port="next_in" > next: </td>
@@ -50,7 +50,7 @@ digraph { subgraph { rank=same
                                 </tr>
                                 <tr>
                                     <td bgcolor = "#f27798" port="next_in" > next: </td>
-                                    <td bgcolor = "#f27798" port="next_out"> 2    </td>
+                                    <td bgcolor = "#f27798" port="next_out"> 3    </td>
                                 </tr>
                             </table>
                         >
@@ -69,16 +69,16 @@ digraph { subgraph { rank=same
                                     </tr>
                                     <tr>
                 <td>   data:  </td>
-                <td>   2    </td>
+                <td>   6    </td>
             
                                 </tr>
                                 <tr>
                                     <td bgcolor = "#5fbcfa" port="prev_out" > prev: </td>
-                                    <td bgcolor = "#5fbcfa" port="prev_in" > 1    </td>
+                                    <td bgcolor = "#5fbcfa" port="prev_in" > 6    </td>
                                 </tr>
                                 <tr>
                                     <td bgcolor = "#f27798" port="next_in" > next: </td>
-                                    <td bgcolor = "#f27798" port="next_out"> 3    </td>
+                                    <td bgcolor = "#f27798" port="next_out"> 0    </td>
                                 </tr>
                             </table>
                         >
@@ -97,12 +97,12 @@ digraph { subgraph { rank=same
                                     </tr>
                                     <tr>
                 <td>   data:  </td>
-                <td>   3    </td>
+                <td>   2    </td>
             
                                 </tr>
                                 <tr>
                                     <td bgcolor = "#5fbcfa" port="prev_out" > prev: </td>
-                                    <td bgcolor = "#5fbcfa" port="prev_in" > 2    </td>
+                                    <td bgcolor = "#5fbcfa" port="prev_in" > 1    </td>
                                 </tr>
                                 <tr>
                                     <td bgcolor = "#f27798" port="next_in" > next: </td>
@@ -125,7 +125,7 @@ digraph { subgraph { rank=same
                                     </tr>
                                     <tr>
                 <td>   data:  </td>
-                <td>   5    </td>
+                <td>   3    </td>
             
                                 </tr>
                                 <tr>
@@ -134,7 +134,7 @@ digraph { subgraph { rank=same
                                 </tr>
                                 <tr>
                                     <td bgcolor = "#f27798" port="next_in" > next: </td>
-                                    <td bgcolor = "#f27798" port="next_out"> 5    </td>
+                                    <td bgcolor = "#f27798" port="next_out"> 6    </td>
                                 </tr>
                             </table>
                         >
@@ -143,45 +143,17 @@ digraph { subgraph { rank=same
                     node_5
                     [
                         style="filled",
-                        fillcolor="#8ff7d6"
-                            shape=plaintext,
-                            label=
-                            <
-                                <table border="0" cellborder="1" cellspacing="0">
-                                    <tr>
-                                        <td bgcolor = "#ffffff" colspan="2">Node #5</td>
-                                    </tr>
-                                    <tr>
-                <td>   data:  </td>
-                <td>   6    </td>
-            
-                                </tr>
-                                <tr>
-                                    <td bgcolor = "#5fbcfa" port="prev_out" > prev: </td>
-                                    <td bgcolor = "#5fbcfa" port="prev_in" > 4    </td>
-                                </tr>
-                                <tr>
-                                    <td bgcolor = "#f27798" port="next_in" > next: </td>
-                                    <td bgcolor = "#f27798" port="next_out"> 0    </td>
-                                </tr>
-                            </table>
-                        >
-                    ];
-                
-                    node_6
-                    [
-                        style="filled",
                         fillcolor="#dcd1e0"
                             shape=plaintext,
                             label=
                             <
                                 <table border="0" cellborder="1" cellspacing="0">
                                     <tr>
-                                        <td colspan="2">Node #6</td>
+                                        <td colspan="2">Node #5</td>
                                     </tr>
                                     <tr>
                 <td>   data:  </td>
-                <td>   4.8267e-246    </td>
+                <td>   4    </td>
             
                             </tr>
                             <tr>
@@ -190,12 +162,40 @@ digraph { subgraph { rank=same
                             </tr>
                             <tr>
                                 <td bgcolor = "#f27798" port="next_in" > next: </td>
-                                <td bgcolor = "#f27798" port="next_out"> 7    </td>
+                                <td bgcolor = "#f27798" port="next_out"> 8    </td>
                             </tr>
                         </table>
                     >
                 ];
             
+                    node_6
+                    [
+                        style="filled",
+                        fillcolor="#8ff7d6"
+                            shape=plaintext,
+                            label=
+                            <
+                                <table border="0" cellborder="1" cellspacing="0">
+                                    <tr>
+                                        <td bgcolor = "#ffffff" colspan="2">Node #6</td>
+                                    </tr>
+                                    <tr>
+                <td>   data:  </td>
+                <td>   5    </td>
+            
+                                </tr>
+                                <tr>
+                                    <td bgcolor = "#5fbcfa" port="prev_out" > prev: </td>
+                                    <td bgcolor = "#5fbcfa" port="prev_in" > 4    </td>
+                                </tr>
+                                <tr>
+                                    <td bgcolor = "#f27798" port="next_in" > next: </td>
+                                    <td bgcolor = "#f27798" port="next_out"> 2    </td>
+                                </tr>
+                            </table>
+                        >
+                    ];
+                
                     node_7
                     [
                         style="filled",
@@ -209,7 +209,7 @@ digraph { subgraph { rank=same
                                     </tr>
                                     <tr>
                 <td>   data:  </td>
-                <td>   4.8267e-246    </td>
+                <td>   7    </td>
             
                             </tr>
                             <tr>
@@ -218,7 +218,7 @@ digraph { subgraph { rank=same
                             </tr>
                             <tr>
                                 <td bgcolor = "#f27798" port="next_in" > next: </td>
-                                <td bgcolor = "#f27798" port="next_out"> 8    </td>
+                                <td bgcolor = "#f27798" port="next_out"> 5    </td>
                             </tr>
                         </table>
                     >
@@ -237,7 +237,63 @@ digraph { subgraph { rank=same
                                     </tr>
                                     <tr>
                 <td>   data:  </td>
-                <td>   4.8267e-246    </td>
+                <td>   0    </td>
+            
+                            </tr>
+                            <tr>
+                                <td  port="prev_out" > prev: </td>
+                                <td  port="prev_in" > -1    </td>
+                            </tr>
+                            <tr>
+                                <td bgcolor = "#f27798" port="next_in" > next: </td>
+                                <td bgcolor = "#f27798" port="next_out"> 9    </td>
+                            </tr>
+                        </table>
+                    >
+                ];
+            
+                    node_9
+                    [
+                        style="filled",
+                        fillcolor="#dcd1e0"
+                            shape=plaintext,
+                            label=
+                            <
+                                <table border="0" cellborder="1" cellspacing="0">
+                                    <tr>
+                                        <td colspan="2">Node #9</td>
+                                    </tr>
+                                    <tr>
+                <td>   data:  </td>
+                <td>   0    </td>
+            
+                            </tr>
+                            <tr>
+                                <td  port="prev_out" > prev: </td>
+                                <td  port="prev_in" > -1    </td>
+                            </tr>
+                            <tr>
+                                <td bgcolor = "#f27798" port="next_in" > next: </td>
+                                <td bgcolor = "#f27798" port="next_out"> 10    </td>
+                            </tr>
+                        </table>
+                    >
+                ];
+            
+                    node_10
+                    [
+                        style="filled",
+                        fillcolor="#dcd1e0"
+                            shape=plaintext,
+                            label=
+                            <
+                                <table border="0" cellborder="1" cellspacing="0">
+                                    <tr>
+                                        <td colspan="2">Node #10</td>
+                                    </tr>
+                                    <tr>
+                <td>   data:  </td>
+                <td>   0    </td>
             
                             </tr>
                             <tr>
@@ -254,32 +310,36 @@ digraph { subgraph { rank=same
             
  node_0:<next_out> -> node_1:<next_in>;
 
- node_1:<next_out> -> node_2:<next_in>;
+ node_1:<next_out> -> node_3:<next_in>;
 
  node_1:<prev_out> -> node_0:<prev_in>;
 
- node_2:<next_out> -> node_3:<next_in>;
-
- node_2:<prev_out> -> node_1:<prev_in>;
+ node_2:<prev_out> -> node_6:<prev_in>;
 
  node_3:<next_out> -> node_4:<next_in>;
 
- node_3:<prev_out> -> node_2:<prev_in>;
+ node_3:<prev_out> -> node_1:<prev_in>;
 
- node_4:<next_out> -> node_5:<next_in>;
+ node_4:<next_out> -> node_6:<next_in>;
 
  node_4:<prev_out> -> node_3:<prev_in>;
 
- node_5:<prev_out> -> node_4:<prev_in>;
+ node_5:<next_out> -> node_8:<next_in>;
 
- node_6:<next_out> -> node_7:<next_in>;
+ node_6:<next_out> -> node_2:<next_in>;
 
- node_7:<next_out> -> node_8:<next_in>;
+ node_6:<prev_out> -> node_4:<prev_in>;
 
- node_8:<next_out> -> node_0:<next_in>;
+ node_7:<next_out> -> node_5:<next_in>;
+
+ node_8:<next_out> -> node_9:<next_in>;
+
+ node_9:<next_out> -> node_10:<next_in>;
+
+ node_10:<next_out> -> node_0:<next_in>;
 }
-FREE [shape=rectangle]; FREE -> node_6;
+FREE [shape=rectangle]; FREE -> node_7;
 ZERO_ELEMENT [shape=rectangle, fillcolor = "#8ff7d6"]; ZERO_ELEMENT -> node_0;
 HEAD [shape=rectangle, fillcolor = "#8ff7d6"]; HEAD -> node_1;
-TAIL [shape=rectangle, fillcolor = "#8ff7d6"]; TAIL -> node_5;
+TAIL [shape=rectangle, fillcolor = "#8ff7d6"]; TAIL -> node_2;
 }

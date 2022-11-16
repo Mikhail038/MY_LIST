@@ -1,10 +1,17 @@
 
 #include "MYassert.h"
+// TODO print differnet types
 
-#define Elem_print "%lg"
 const int coef = 2;
 
-typedef double TElem;
+typedef struct
+{
+    int    date;
+    int    time;
+    char   name;
+} SStruct;
+
+typedef int TElem;
 
 typedef struct
 {
@@ -54,4 +61,6 @@ char* gv_make_data (SList* List, int address);
 
 void draw_gv_list (void);
 
-void print_node (TElem data, FILE* gvInputFile);
+void print_gv_node (TElem data, FILE* gvInputFile);
+
+void print_node (TElem data);

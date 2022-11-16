@@ -42,96 +42,7 @@ static const StructError ArrStructErr[] =
 #define FREE_COLOR "dcd1e0"
 #define DATA_COLOR "8ff7d6"
 #define ZERO_COLOR "baf763"
-/*
-    fprintf (file,  "digraph { subgraph { rank=same \n");
 
-    for (int i = 1; i < list->size; i++)
-    {
-        fprintf (file,
-            R"(
-                node_%02d
-                [
-                    style="filled",
-                    fillcolor="#%X"
-                    shape=plaintext,
-                    label=
-                    <
-                        <table border="0" cellborder="1" cellspacing="0">
-                            <tr>
-                                <td colspan="2">Node #%d</td>
-                            </tr>
-                            <tr>
-            )", i, (unsigned) list->list[i].status, i);
-
-        DataPrinter (file, &(list->list[i].data));
-
-        fprintf(file,
-            R"(
-                            </tr>
-                            <tr>
-                                <td port="prev_out" > prev: </td>
-                                <td port="prev_in" > %d    </td>
-                            </tr>
-                            <tr>
-                                <td port="next_in" > next: </td>
-                                <td port="next_out"> %d    </td>
-                            </tr>
-                        </table>
-                    >
-                ];
-            )", list->list[i].prev, list->list[i].next);
-    }
-
-    for (int i = 1; i < list->size; i++)
-    {
-        if (list->list[i].next > 0)
-        {
-            fprintf (file,  "\nnode_%02d:<next_out> -> node_%02d:<next_in>;\n",
-                    i, list->list[i].next);
-        }
-
-        if (list->list[i].prev > 0)
-        {
-            fprintf (file,  "\n node_%02d:<prev_out> -> node_%02d:<prev_in>;\n",
-                    i, list->list[i].prev);
-        }
-    }
-    fprintf (file, "}\n");
-
-    if (list->list[0].next == 0 || list->list[0].prev == 0)
-    {
-        fprintf (file, "node_00 [shape=rectangle, label=\"Terminating node\n(Node #0)\", style=\"filled\", fillcolor=grey];\n");
-    }
-
-    if (list->empty_start <= 0)
-    {
-        fprintf (file, "node_empty_start [shape=rectangle, label=\"Terminating free elements node\n(Node #-1)\", style=\"filled\", fillcolor=grey];\n"
-        "empty_start [shape=rectangle]; empty_start  -> node_empty_start;\n");
-    }
-
-    else
-    {
-        fprintf (file, "empty_start [shape=rectangle]; empty_start -> node_%02d;\n", list->empty_start);
-    }
-
-    fprintf (file,  "head [shape=rectangle]; head -> node_%02d;\n"
-                    "tail [shape=rectangle]; tail -> node_%02d;\n}",
-           list->list[0].next, list->list[0].prev);
-
-    fclose (file);
-
-    void DataPrinter (FILE* file, ll_type* data_to_print)
-{
-    fprintf (file,
-            R"(
-                <td>mat:    %d</td>
-                <td>kanava: %d</td>
-            )",
-            data_to_print->mat, data_to_print->kanava);
-    return;
-}
-
-*/
 void dump_errors (void)
 {
     printf ("==ERROR DUMP==\n");
@@ -197,27 +108,35 @@ void dump_list (SList* List)
     printf (KYLW "free %d\n" KNRM, List->free);
 
 
-    printf (Kbright KWHT "[%02d] %12lg |%2d|%2d|\n" KNRM, 0,
-            List->ArrData[ZERO_ELEMENT].data, List->ArrData[ZERO_ELEMENT].prev, List->ArrData[ZERO_ELEMENT].next);
+    printf (Kbright KWHT "[%02d]", ZERO_ELEMENT);
+
+    print_node (List->ArrData[ZERO_ELEMENT].data);
+
+    printf ("|%2d|%2d|\n" KNRM, List->ArrData[ZERO_ELEMENT].prev, List->ArrData[ZERO_ELEMENT].next);
 
     printf (KRED Kunderscore "In memory:\n" KNRM KRED);
+
     for (int counter = 1; counter <= List->capacity; ++counter)
     {
-        printf ("[%02d] %12lg |%2d|%2d|\n", counter,
-        List->ArrData[counter].data, List->ArrData[counter].prev, List->ArrData[counter].next);
+        printf (KRED "[%02d]", counter);
+
+        print_node (List->ArrData[counter].data);
+
+        printf ("|%2d|%2d|\n" , List->ArrData[counter].prev, List->ArrData[counter].next);
     }
 
     int address = List->ArrData[0].next;
 
     printf (KBLU Kunderscore "In logic way:\n" KNRM KBLU);
+
     for (int counter = 1; counter <= List->size; ++counter)
     {
-        printf ("[%02d] %12lg |%2d|%2d|\n", address,
-        List->ArrData[address].data, List->ArrData[address].prev, List->ArrData[address].next);
+        printf (KBLU "[%02d]", counter);
 
-        address = List->ArrData[address].next;
+        print_node (List->ArrData[counter].data);
+
+        printf ("|%2d|%2d|\n" , List->ArrData[counter].prev, List->ArrData[counter].next);
     }
-
 
     printf (KNRM);
 
@@ -250,16 +169,16 @@ int list_constructor (SList* List, int Size)
 
     List->ArrData = (SElem*) calloc (Size + 1, sizeof (*List->ArrData));
 
-    TElem poison = 0;
-    if (sizeof (TElem) == sizeof (double))
-    {
-        do_dead_ded (&poison);
-    }
+    //TElem poison = 0;
+    // if (sizeof (TElem) == sizeof (double))
+    // {
+    //     do_dead_ded (&poison);
+    // }
 
-    for (int counter = 0; counter <= Size; ++counter)
-    {
-        List->ArrData[counter].data = poison;
-    }
+    // for (int counter = 0; counter <= Size; ++counter)
+    // {
+    //     List->ArrData[counter].data = poison;
+    // }
 
     List->ArrData[ZERO_ELEMENT].next = 0;
     List->ArrData[ZERO_ELEMENT].prev = 0;
@@ -328,13 +247,13 @@ int pop_from_list (SList* List, int address)
     List->ArrData[address].prev = InvalidNumber;
     List->ArrData[address].next = List->free;
 
-    TElem poison = 0;
-
-    if (sizeof (TElem) == sizeof (double))
-    {
-        do_dead_ded (&poison);
-    }
-    List->ArrData[address].data = poison;
+//     TElem poison = 0;
+//
+//     if (sizeof (TElem) == sizeof (double))
+//     {
+//         do_dead_ded (&poison);
+//     }
+//     List->ArrData[address].data = poison;
 
 
     List->free = address;
@@ -421,17 +340,17 @@ int make_list_bigger (SList* List)
 
     List->free = List->size + 1;
 
-    TElem poison = 0;
-    if (sizeof (TElem) == sizeof (double))
-    {
-        do_dead_ded (&poison);
-    }
+    // TElem poison = 0;
+    // if (sizeof (TElem) == sizeof (double))
+    // {
+    //     do_dead_ded (&poison);
+    // }
 
     for (int counter = 1; counter <= List->capacity - List->size; ++counter)
     {
         List->ArrData[address].next = address + 1;
         List->ArrData[address].prev = InvalidNumber;
-        List->ArrData[address].data = poison;
+        //List->ArrData[address].data = poison;
 
         ++address;
     }
@@ -509,10 +428,6 @@ void make_gv_list (SList* List)
     FILE* gvInputFile = fopen ("gvList.dot", "w");
     MCE (gvInputFile != NULL, GVCannotOpenDotFile);
 
-    int address = ZERO_ELEMENT;
-    char* BufStr = NULL;
-
-
     fprintf (gvInputFile,   "digraph { subgraph { rank=same \n"
                             //"subgraph {\n"
                             //"\t""graph [dpi = 1000];\n"
@@ -588,7 +503,7 @@ void make_gv_list (SList* List)
                                     <tr>)", counter);
         }
 
-        print_node (List->ArrData[counter].data, gvInputFile);
+        print_gv_node (List->ArrData[counter].data, gvInputFile);
 
         if (List->ArrData[counter].prev != InvalidNumber)
         {
@@ -731,19 +646,12 @@ void make_gv_list (SList* List)
     return;
 }
 
-void print_node (TElem data, FILE* gvInputFile)
+void print_gv_node (TElem data, FILE* gvInputFile)
 {
         fprintf (gvInputFile,R"(
                 <td>   data:  </td>
-                <td>   %lg    </td>
+                <td>   %d    </td>
             )", data);
-}
-
-char* gv_make_data (SList* List, int address)
-{
-    char* ReturnValue = (char*) calloc (StdDataSize + sizeof (TElem) + 3 * sizeof(int), sizeof (*ReturnValue)); //!
-    sprintf (ReturnValue, "{{<ad> Node#%d |" Elem_print "| {<pr> prev: %d  | <nx> next: %d} } }", address, List->ArrData[address].data, List->ArrData[address].prev, List->ArrData[address].next);
-    return ReturnValue;
 }
 
 void draw_gv_list (void)
@@ -753,9 +661,14 @@ void draw_gv_list (void)
     system ("xdg-open gvList.png");
 }
 
-//TODO ?? maybe tmp folder mktmp
+void print_node (TElem data)
+{
+    printf ("%12d", data);
+}
 
-//TODO variable filename
+//TDO ?? maybe tmp folder mktmp
+
+//TDO variable filename
 
 
 // <table>

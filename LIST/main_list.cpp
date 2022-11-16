@@ -10,7 +10,7 @@ int main ()
 {
     SList List = {};
 
-    int size = 2;
+    int size = 10;
 
     list_constructor (&List, size);
 
@@ -18,6 +18,7 @@ int main ()
     int buf = 0;
     int tail = 0;
 
+    //dump_list (&List);
 
     insert_after  (&List, 1, 0, &buf);
 
@@ -37,9 +38,9 @@ int main ()
 
     pop_from_list (&List, buf);
 
-    dump_list (&List);
+    //dump_list (&List);
 
-    sort_list (&List);
+    //sort_list (&List);
 
     dump_list (&List);
 
